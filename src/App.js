@@ -1,19 +1,31 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Rick from "./pages/Rick";
+import Heroes from "./pages/heroes/heroes";
+import Hero from "./pages/hero/heroes/id/hero";
+import Navbar from "./pages/Navbar";
+import HeroesMui from "./pages/heroes/heroesMui";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { dark } from "@mui/material/styles/createPalette";
+import { Box } from "@mui/system";
 
 const App = () => {
+  const NotFound = () => {
+    return <h1>404 Not Found</h1>;
+  };
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="api" element={<Rick />} />
-
-        {/* <Route path="about" element={<About />} />
-        <Route path="services" element={<Services />} />
-        <Route path="contact" element={<Contact />} /> */}
-      </Routes>
+      <Navbar />
+      <Box className="container">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="heroes" element={<Heroes />} />
+          <Route path="heroesMui" element={<HeroesMui />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="hero" element={<Hero id={1} />} />
+        </Routes>
+      </Box>
     </BrowserRouter>
   );
 };
