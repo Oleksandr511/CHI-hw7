@@ -1,7 +1,4 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
-import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import { Box, Container, Typography } from "@mui/material";
 
 import Hero from "./hero/heroes/id/hero";

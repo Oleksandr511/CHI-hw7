@@ -15,17 +15,20 @@ export default function Hero() {
   }
 
   return (
-
     <Box>
-      <Typography color="green" variant="h1">Hero</Typography>
+      <Typography color="green" variant="h1">
+        Hero
+      </Typography>
       {loading ? (
-        <h1 style={{background: 'pink'}}>Loading...</h1>
+        <h1 style={{ background: "pink" }}>Loading...</h1>
       ) : (
         <Box>
           <ImageListItem key={id}>
             <img src={data?.image} alt={data?.name} loading="lazy" />
           </ImageListItem>
-          <Typography variant="h2" color="green">{data?.name}</Typography>
+          <Typography variant="h2" color="green">
+            {data?.name}
+          </Typography>
         </Box>
       )}
     </Box>

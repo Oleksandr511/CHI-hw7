@@ -3,6 +3,5 @@ export const getSingleCharacter = async (id) => {
         `https://rickandmortyapi.com/api/character/${id}`
     );
     const data = await response.json();
-    console.log(data)
     return data;
 };
