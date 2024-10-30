@@ -1,10 +1,8 @@
 import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
-import { createTheme } from "@mui/material/styles";
 
 export default function DataGridDemo({ theme, rows, rowClick }) {
-  console.log("theme", theme.palette.mode);
 
   const columns = [
     { field: "id", name: "ID", width: 90 },
@@ -25,7 +23,7 @@ export default function DataGridDemo({ theme, rows, rowClick }) {
   ];
 
   return (
-    <Box sx={{ height: "100%", widows: "100%" }}>
+    <Box sx={{  widows: "100%" }}>
       <DataGrid
         sx={{
           "& .MuiDataGrid-row": {
@@ -51,18 +49,10 @@ export default function DataGridDemo({ theme, rows, rowClick }) {
             paginationModel: {
               pageSize: 5,
             },
-            // paginationMode: "server",
           },
         }}
-        onRowClick={(row) => {
-          console.log(row);
-          rowClick(row.id);
-        }}
+        onRowClick={(row) => rowClick(row.id)}
         pageSizeOptions={[5]}
-        // sx={{
-        //   "& .MuiDataGrid-row": { backgroundColor: "lightblue" },
-        //   "& .MuiDataGrid-row:hover": { backgroundColor: "lightgreen" },
-        // }}
       />
     </Box>
   );

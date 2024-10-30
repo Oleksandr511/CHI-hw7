@@ -1,99 +1,96 @@
-import React, { useEffect } from "react";
 import { getCharacters } from "../../utils/getCharacters";
-import { Box, Button, Drawer, Typography } from "@mui/material";
-import Hero from "../hero/heroes/id/hero";
-import { DataGrid } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
+import React from "react";
+import DataGridDemo from "./dataGridDemo";
+import {
+  Drawer,
+  Box,
+  Switch,
+  Typography,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useRequest } from "ahooks";
 
 export default function Heroes() {
-  const [characters, setCharacters] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const renderPage = React.useRef(0);
-  const [loader, setLoader] = React.useState(false);
-  const [prev, setPrev] = React.useState(0);
-  const [next, setNext] = React.useState(1);
-  // const [heroId, setHeroId] = React.useState(1);
-  const refHeroId = React.useRef(1);
+  const [rows, setRows] = React.useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+  const navigate = useNavigate();
+
+  const { data, loading, error } = useRequest(() => getCharacters(1));
+
   useEffect(() => {
-    getNextCharacters();
-  }, []);
-  const getNextCharacters = async () => {
-    setLoader(true);
+    const chRows = data?.characters.map((character) => {
+      return {
+        id: character.id,
+        name: character.name,
+        status: character.status,
+      };
+    });
+    setRows(chRows);
+  }, [data]);
 
-    const {
-      characters: newCharacters,
-      next: nextPg,
-      prev: prevPg,
-    } = await getCharacters(++renderPage.current);
-    setPage(renderPage.current);
-    setCharacters(newCharacters);
-    setPrev(prevPg);
-    setNext(nextPg);
-    setLoader(false);
-  };
-  const getPrevCharacters = async () => {
-    setLoader(true);
-    const {
-      characters: newCharacters,
-      next: nextPg,
-      prev: prevPg,
-    } = await getCharacters(--renderPage.current);
-    setPrev(prevPg);
-    setNext(nextPg);
-    setPage(renderPage.current);
-    setCharacters(newCharacters);
-    setLoader(false);
-  };
-  const [open, setOpen] = React.useState(false);
-
-  const toggleDrawer = (newOpen, id) => (event) => {
-    refHeroId.current = id;
-    setOpen(newOpen);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleRowClick = (heroId) => {
+    navigate(`/heroes/${heroId}`);
+    setIsOpen(true);
   };
   const DrawerList = (
     <Box
       sx={{ width: 350 }}
       className={{ display: "flex", justifyContent: "center" }}
       role="presentation"
-      onClick={toggleDrawer(false)}
+      onClick={() => setIsOpen(false)}
     >
-      <Hero id={refHeroId.current} />
+      <Outlet />
     </Box>
   );
-  return (
-    <div className="heroes">
-      <div className="header">
-        <Typography component="h1">Rick & Morty</Typography>
-        <Typography component="p">Welcome to the Rick & Morty page!</Typography>
-        <Button onClick={() => getPrevCharacters()} disabled={!prev}>
-          Prev
-        </Button>
-        <Button onClick={() => getNextCharacters()} disabled={!next}>
-          Next
-        </Button>
-        <Typography component="p">Page: {page}</Typography>
-      </div>
-      {loader ? (
-        <div className="loader">
-          <h2>Loading...</h2>
-        </div>
-      ) : (
-        <div className="characters">
-          {characters.map((character) => (
-            <div
-              className="character"
-              key={character.id}
-              onClick={toggleDrawer(true, character.id)}
-            >
-              <h2>{character.name}</h2>
-              <img src={character.image} alt={character.name} />
-              <p>{character.status}</p>
-            </div>
-          ))}
-          <Drawer open={open} onClose={toggleDrawer(false)}>
-            {DrawerList}
-          </Drawer>
-        </div>
-      )}
-    </div>
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? "dark" : "light",
+      primary: {
+        main: "#0066CC",
+        dark: "#007FFF",
+      },
+    },
+
+    typography: {
+      fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+      fontWeightLight: 300,
+      fontWeightRegular: 400,
+      fontWeightMedium: 500,
+    },
+  });
+  return loading ? (
+    <Typography variant="h1" style={{ background: "pink" }}>
+      Loading...
+    </Typography>
+  ) : (
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          borderRadius: 1,
+          bgcolor: "lightblue",
+          "&:hover": {
+            bgcolor: "#14f0ce",
+          },
+        }}
+      >
+        <Typography variant="h1" component="h1">
+          HeroesMui
+        </Typography>
+        <Typography sx={{ color: "darkblue" }} component="p" variant="p">
+          Switch theme
+        </Typography>
+        <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+        <DataGridDemo theme={theme} rows={rows} rowClick={handleRowClick} />
+        <Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
+          {DrawerList}
+        </Drawer>
+      </Box>
+    </ThemeProvider>
   );
 }
